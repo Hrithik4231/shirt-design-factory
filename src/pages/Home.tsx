@@ -1,10 +1,16 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const Home = () => {
   const [activeCategory, setActiveCategory] = useState(0);
@@ -31,7 +37,7 @@ const Home = () => {
       ratingCount: 15,
       price: 599,
       description: "100% Cotton, Polo Neck",
-      colors: ["bg-green-700", "bg-blue-600", "bg-black", "bg-red-500"]
+      primaryColor: "bg-green-700"
     },
     { 
       id: 2, 
@@ -41,7 +47,7 @@ const Home = () => {
       ratingCount: 12,
       price: 499,
       description: "100% Cotton, Round Neck",
-      colors: ["bg-blue-500", "bg-black", "bg-red-600", "bg-yellow-400"]
+      primaryColor: "bg-blue-500"
     },
     { 
       id: 3, 
@@ -51,7 +57,7 @@ const Home = () => {
       ratingCount: 18,
       price: 699,
       description: "100% Cotton, Polo Neck",
-      colors: ["bg-black", "bg-blue-500", "bg-green-700", "bg-red-500"]
+      primaryColor: "bg-black"
     },
     { 
       id: 4, 
@@ -61,7 +67,7 @@ const Home = () => {
       ratingCount: 20,
       price: 999,
       description: "80% Cotton 20% Polyester, Hoodie",
-      colors: ["bg-black", "bg-yellow-500", "bg-red-800", "bg-gray-700"]
+      primaryColor: "bg-red-800"
     },
   ];
   
@@ -164,29 +170,27 @@ const Home = () => {
         
         {/* Categories Carousel */}
         <section className="py-8 px-4 container mx-auto relative">
-          <div className="flex overflow-x-auto pb-4 gap-4 -mx-2 px-2 scrollbar-hide">
-            {categories.map((category) => (
-              <div key={category.id} className="flex-none w-64 min-w-64">
-                <div className="relative group h-48 bg-gray-200 rounded-lg overflow-hidden">
-                  <img 
-                    src={category.image} 
-                    alt={category.name} 
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end p-4">
-                    <h3 className="text-white font-medium text-center w-full">{category.name}</h3>
+          <h2 className="text-xl font-bold mb-6">Categories</h2>
+          <Carousel className="w-full">
+            <CarouselContent>
+              {categories.map((category) => (
+                <CarouselItem key={category.id} className="basis-1/4">
+                  <div className="relative group h-48 bg-gray-200 rounded-lg overflow-hidden">
+                    <img 
+                      src={category.image} 
+                      alt={category.name} 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end p-4">
+                      <h3 className="text-white font-medium text-center w-full">{category.name}</h3>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <button className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 bg-white rounded-full p-2 shadow-md">
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-          <button className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1 bg-white rounded-full p-2 shadow-md">
-            <ChevronRight className="h-6 w-6" />
-          </button>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-0" />
+            <CarouselNext className="right-0" />
+          </Carousel>
         </section>
         
         {/* Complete your designs */}
@@ -215,6 +219,7 @@ const Home = () => {
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />
+                  <div className={`absolute bottom-2 right-2 w-6 h-6 rounded-full ${product.primaryColor} border-2 border-white shadow-sm`}></div>
                 </div>
                 <CardContent className="p-4">
                   <div className="flex items-center mb-1">
@@ -225,21 +230,15 @@ const Home = () => {
                   <p className="text-sm text-gray-600 mb-2">{product.description}</p>
                   <div className="flex justify-between items-center">
                     <p className="font-bold">₹{product.price}</p>
-                    <div className="flex gap-1">
-                      {product.colors.map((color, i) => (
-                        <div key={i} className={`w-4 h-4 rounded-full ${color}`}></div>
-                      ))}
-                    </div>
+                    <Link to="/customize" className="text-xs text-blue-500 hover:underline">
+                      Customize
+                    </Link>
                   </div>
                   <div className="text-xs text-gray-500 mt-2">Free Shipping</div>
                 </CardContent>
               </Card>
             ))}
           </div>
-          
-          <button className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md">
-            <ChevronRight className="h-6 w-6" />
-          </button>
         </section>
         
         {/* Explore All Categories */}
@@ -268,24 +267,26 @@ const Home = () => {
         <section className="py-8 px-4 container mx-auto relative">
           <h2 className="text-xl font-bold mb-6">Winter Collections</h2>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {winterCollection.map((item) => (
-              <div key={item.id} className="relative aspect-square bg-gray-100 rounded-md overflow-hidden group">
-                <img 
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-white bg-opacity-80 p-3 text-center">
-                  <h3 className="text-sm font-medium">{item.name}</h3>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <button className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md">
-            <ChevronRight className="h-6 w-6" />
-          </button>
+          <Carousel className="w-full">
+            <CarouselContent>
+              {winterCollection.map((item) => (
+                <CarouselItem key={item.id} className="basis-1/4">
+                  <div className="relative aspect-square bg-gray-100 rounded-md overflow-hidden group">
+                    <img 
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-white bg-opacity-80 p-3 text-center">
+                      <h3 className="text-sm font-medium">{item.name}</h3>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-0" />
+            <CarouselNext className="right-0" />
+          </Carousel>
         </section>
       </main>
       
