@@ -13,7 +13,7 @@ import {
   Info, 
   Share as ShareIcon 
 } from 'lucide-react';
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 interface CustomizationPanelProps {
   onColorChange: (color: string) => void;
