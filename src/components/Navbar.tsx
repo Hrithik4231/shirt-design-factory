@@ -1,36 +1,45 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { ShoppingCart, User, Phone } from "lucide-react";
 
 const Navbar = () => {
   return (
     <header className="bg-white shadow-sm border-b">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         <Link to="/" className="flex items-center">
-          <span className="text-brand-blue text-2xl font-bold">
+          <span className="text-blue-500 text-2xl font-bold">
             TeeDesigner
           </span>
         </Link>
         
         <nav className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="text-gray-700 hover:text-brand-blue font-medium">
-            Home
-          </Link>
-          <Link to="/" className="text-gray-700 hover:text-brand-blue font-medium">
+          <Link to="/" className="text-gray-700 hover:text-blue-500 font-medium">
             Products
           </Link>
-          <Link to="/" className="text-gray-700 hover:text-brand-blue font-medium">
+          <Link to="/my-orders" className="text-gray-700 hover:text-blue-500 font-medium">
             My Orders
+          </Link>
+          <Link to="/customize" className="text-gray-700 hover:text-blue-500 font-medium">
+            Customize
           </Link>
         </nav>
         
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" className="hidden md:inline-flex">
-            Log In
-          </Button>
-          <Button className="bg-brand-blue hover:bg-brand-lightblue">
-            Sign Up
-          </Button>
+        <div className="flex items-center space-x-4">
+          <div className="hidden md:flex items-center">
+            <Phone className="h-4 w-4 mr-2 text-blue-500" />
+            <span className="text-sm">+91 7789231728</span>
+          </div>
+          <Link to="/login">
+            <Button variant="ghost" size="icon">
+              <User className="h-5 w-5" />
+            </Button>
+          </Link>
+          <Link to="/cart">
+            <Button variant="ghost" size="icon">
+              <ShoppingCart className="h-5 w-5" />
+            </Button>
+          </Link>
         </div>
       </div>
     </header>

@@ -1,9 +1,12 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import TShirtCanvas from "@/components/TShirtCanvas";
 import TShirtViewSelector from "@/components/TShirtViewSelector";
 import CustomizationPanel from "@/components/CustomizationPanel";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 interface Design {
   id: string;
@@ -55,6 +58,15 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
+      
+      <div className="bg-white shadow-sm py-3 px-4">
+        <div className="container mx-auto flex items-center">
+          <Link to="/" className="flex items-center text-gray-600 hover:text-blue-500">
+            <ArrowLeft className="h-5 w-5 mr-2" />
+            <span>Back to Shop</span>
+          </Link>
+        </div>
+      </div>
       
       <main className="flex-1 container mx-auto py-8 px-4">
         <h1 className="text-3xl font-bold text-center mb-8">Design Your Custom T-Shirt</h1>
