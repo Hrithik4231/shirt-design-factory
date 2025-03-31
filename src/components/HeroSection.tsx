@@ -26,7 +26,7 @@ const HeroSection = () => {
         <div className="hidden md:flex justify-center items-center relative">
           <div className="relative w-80 h-80">
             <img 
-              src="/t-shirt-front.png" 
+              src="/lovable-uploads/7c35a75d-c967-4899-8eca-49d6306c6f6f.png" 
               alt="T-shirt Preview" 
               className="absolute w-full h-full object-contain transform transition-all duration-500 hover:scale-110 z-10"
             />
