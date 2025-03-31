@@ -5,7 +5,7 @@ const categories = [
   { id: 1, name: "Cotton Tees", image: "/lovable-uploads/f58560c1-52ee-4c3e-a214-0a25ef2ce2ac.png", link: "/category/cotton-tees" },
   { id: 2, name: "Polo Shirts", image: "/lovable-uploads/942023d1-8c37-428d-ba46-52cb1dee3186.png", link: "/category/polos" },
   { id: 3, name: "Hoodies", image: "/lovable-uploads/65186a80-a920-449a-aec0-8604fca41066.png", link: "/category/hoodies" },
-  { id: 4, name: "Custom Prints", image: "/lovable-uploads/a80b18ad-52c5-4b00-a243-513405d1c910.png", link: "/customize" },
+  { id: 4, name: "Custom Prints", image: "/lovable-uploads/dd65986d-5ed6-46e5-84fd-1804d120456b.png", link: "/customize" },
 ];
 
 const CategorySection = () => {
