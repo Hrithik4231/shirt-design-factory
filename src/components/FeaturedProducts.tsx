@@ -9,7 +9,7 @@ const products = [
   { 
     id: 1, 
     name: "Premium Cotton Polo", 
-    image: "/t-shirt-front.png",
+    image: "/lovable-uploads/a9685395-ef50-4e65-86a0-b3cc4dd15cd8.png",
     rating: 4.5,
     reviewCount: 124,
     price: 599,
