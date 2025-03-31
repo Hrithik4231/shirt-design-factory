@@ -54,7 +54,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <div className="hidden md:flex items-center">
             <Phone className="h-4 w-4 mr-2 text-blue-500" />
-            <span className="text-sm">+91 7789231728</span>
+            <span className="text-sm">+91 9989113115</span>
           </div>
           
           {isLoggedIn ? (
