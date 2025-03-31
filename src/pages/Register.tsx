@@ -55,9 +55,17 @@ const Register = () => {
   const onSubmit = (data: FormValues) => {
     console.log("Registration data:", data);
     // In a real app, this would call a registration API
+    
+    // Set login state in localStorage
+    localStorage.setItem('isLoggedIn', 'true');
+    
+    // Dispatch event to notify other components of login status change
+    window.dispatchEvent(new Event('loginStatusChanged'));
+    
     toast.success("Account created successfully!");
-    // Redirect to login page after successful registration
-    setTimeout(() => navigate("/login"), 1500);
+    
+    // Redirect to home page after successful registration
+    setTimeout(() => navigate("/"), 1500);
   };
 
   return (

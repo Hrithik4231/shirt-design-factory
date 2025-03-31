@@ -45,7 +45,15 @@ const Login = () => {
   const onSubmit = (data: FormValues) => {
     console.log("Login data:", data);
     // In a real app, this would call an authentication API
+    
+    // Set login state in localStorage
+    localStorage.setItem('isLoggedIn', 'true');
+    
+    // Dispatch event to notify other components of login status change
+    window.dispatchEvent(new Event('loginStatusChanged'));
+    
     toast.success("Login successful!");
+    
     // Redirect to home page after successful login
     setTimeout(() => navigate("/"), 1500);
   };
