@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 
 const categories = [
-  { id: 1, name: "Cotton Tees", image: "/t-shirt-front.png", link: "/category/cotton-tees" },
+  { id: 1, name: "Cotton Tees", image: "/lovable-uploads/7c35a75d-c967-4899-8eca-49d6306c6f6f.png", link: "/category/cotton-tees" },
   { id: 2, name: "Polo Shirts", image: "/t-shirt-front.png", link: "/category/polos" },
   { id: 3, name: "Hoodies", image: "/t-shirt-front.png", link: "/category/hoodies" },
   { id: 4, name: "Custom Prints", image: "/t-shirt-front.png", link: "/customize" },
