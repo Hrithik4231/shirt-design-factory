@@ -1,10 +1,9 @@
-
 import { Link } from "react-router-dom";
 
 const categories = [
   { id: 1, name: "Cotton Tees", image: "/lovable-uploads/f58560c1-52ee-4c3e-a214-0a25ef2ce2ac.png", link: "/category/cotton-tees" },
   { id: 2, name: "Polo Shirts", image: "/lovable-uploads/942023d1-8c37-428d-ba46-52cb1dee3186.png", link: "/category/polos" },
-  { id: 3, name: "Hoodies", image: "/t-shirt-front.png", link: "/category/hoodies" },
+  { id: 3, name: "Hoodies", image: "/lovable-uploads/65186a80-a920-449a-aec0-8604fca41066.png", link: "/category/hoodies" },
   { id: 4, name: "Custom Prints", image: "/t-shirt-front.png", link: "/customize" },
 ];
 
