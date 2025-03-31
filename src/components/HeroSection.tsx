@@ -16,7 +16,7 @@ const HeroSection = () => {
               </Button>
             </Link>
             <Link to="/products">
-              <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10">
+              <Button size="lg" className="bg-white text-purple-900 hover:bg-gray-100 border-2 border-white">
                 Browse Collection
               </Button>
             </Link>
