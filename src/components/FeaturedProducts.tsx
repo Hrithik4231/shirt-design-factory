@@ -45,7 +45,7 @@ const products = [
   { 
     id: 4, 
     name: "Striped Polo", 
-    image: "/t-shirt-front.png",
+    image: "/lovable-uploads/dca7abda-68f8-4fad-b0a2-33ddd7c18c4d.png",
     rating: 4.3,
     reviewCount: 67,
     price: 799,
