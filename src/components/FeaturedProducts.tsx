@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,7 +20,7 @@ const products = [
   { 
     id: 2, 
     name: "Classic White Tee", 
-    image: "/t-shirt-front.png",
+    image: "/lovable-uploads/7e1a891e-e2f0-40b9-a69a-da8b29d2bd09.png",
     rating: 4.8,
     reviewCount: 245,
     price: 399,
