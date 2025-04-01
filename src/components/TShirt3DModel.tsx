@@ -32,17 +32,6 @@ function TShirtModel({ color, position = [0, 0, 0], scale = [1, 1, 1], rotation 
     return colorMap[colorName.toLowerCase()] || colorMap.white;
   };
   
-  // Create a simple animation
-  useFrame((state) => {
-    if (groupRef.current) {
-      if (hovered) {
-        groupRef.current.rotation.y += 0.01;
-      } else {
-        groupRef.current.rotation.y += 0.003;
-      }
-    }
-  });
-
   // Get the color as a THREE.Color object
   const threeColor = getThreeColor(color);
 

@@ -1,6 +1,6 @@
 
 import { useRef, useEffect } from 'react';
-import { motion, useAnimation, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface RotatingTShirtProps {
   imageUrl: string;
@@ -8,20 +8,8 @@ interface RotatingTShirtProps {
 }
 
 const RotatingTShirt = ({ imageUrl, className = "" }: RotatingTShirtProps) => {
-  const controls = useAnimation();
   const containerRef = useRef<HTMLDivElement>(null);
   
-  useEffect(() => {
-    controls.start({
-      rotateY: [0, 360],
-      transition: {
-        duration: 20,
-        ease: "linear",
-        repeat: Infinity,
-      }
-    });
-  }, [controls]);
-
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current) return;
@@ -61,7 +49,6 @@ const RotatingTShirt = ({ imageUrl, className = "" }: RotatingTShirtProps) => {
     <div className={`${className} transition-transform duration-300`} ref={containerRef}>
       <AnimatePresence>
         <motion.div
-          animate={controls}
           className="relative w-full h-full"
           style={{ transformStyle: 'preserve-3d' }}
         >
