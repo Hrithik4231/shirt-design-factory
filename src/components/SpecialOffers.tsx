@@ -56,7 +56,7 @@ const SpecialOffers = () => {
                 </div>
                 <div className="aspect-square bg-gray-50 p-4 rounded-lg flex items-center justify-center">
                   <img 
-                    src="/lovable-uploads/8a983b34-48d2-4feb-a074-296fa978be67.png" 
+                    src="/lovable-uploads/654ff394-ccf2-4197-a335-ad0cb1efcc32.png" 
                     alt="Back view of customizable t-shirt" 
                     className="w-full h-full object-contain"
                   />
