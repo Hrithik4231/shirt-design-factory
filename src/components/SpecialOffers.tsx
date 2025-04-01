@@ -49,7 +49,7 @@ const SpecialOffers = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="aspect-square bg-gray-50 p-4 rounded-lg flex items-center justify-center">
                   <img 
-                    src="/lovable-uploads/8a983b34-48d2-4feb-a074-296fa978be67.png" 
+                    src="/lovable-uploads/4f861f62-dd20-4d37-8564-f437f83338f7.png" 
                     alt="Front view of customizable t-shirt" 
                     className="w-full h-full object-contain"
                   />
