@@ -31,11 +31,35 @@ const TShirtCanvas = ({ color, view, designs }: TShirtCanvasProps) => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Use this to store the T-shirt image paths based on view and color
+  // Get the appropriate t-shirt image based on the selected view
   const getTshirtImage = () => {
-    // In a real app, you would have different images for different views and colors
-    // For now, we'll use placeholders with different background colors
-    return `/t-shirt-${view}.png`;
+    // Map view to the corresponding image paths
+    const viewMap = {
+      front: "/lovable-uploads/65186a80-a920-449a-aec0-8604fca41066.png",
+      back: "/lovable-uploads/a9685395-ef50-4e65-86a0-b3cc4dd15cd8.png",
+      left: "/lovable-uploads/654ff394-ccf2-4197-a335-ad0cb1efcc32.png",
+      right: "/lovable-uploads/942023d1-8c37-428d-ba46-52cb1dee3186.png"
+    };
+    
+    return viewMap[view] || viewMap.front;
+  };
+
+  // Function to get appropriate color overlay based on selected color
+  const getColorStyle = () => {
+    // Map color names to their CSS color values
+    const colorMap: Record<string, string> = {
+      "aqua": "#5CE1E6",
+      "white": "#FFFFFF",
+      "black": "#000000",
+      "red": "#FF3B30",
+      "blue": "#0A84FF",
+      "green": "#30D158",
+      "yellow": "#FFD60A",
+      "purple": "#BF5AF2",
+      "gray": "#8E8E93",
+    };
+    
+    return { backgroundColor: colorMap[color.toLowerCase()] || colorMap.white };
   };
 
   return (
@@ -68,32 +92,34 @@ const TShirtCanvas = ({ color, view, designs }: TShirtCanvasProps) => {
           </>
         ) : (
           <>
-            {/* Base T-shirt with selected color */}
-            <div 
-              className={cn(
-                "absolute inset-0 w-full h-full flex items-center justify-center",
-                `bg-tshirt-${color.toLowerCase()}`
-              )}
-            >
-              <img 
-                src={getTshirtImage()} 
-                alt={`T-shirt ${view} view`} 
-                className="w-full h-full object-contain"
-                style={{ opacity: 0.3 }} // This makes the color show through
-              />
+            {/* Base T-shirt image with color overlay */}
+            <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+              <div className="relative w-full h-full">
+                <div 
+                  className="absolute inset-0 w-full h-full opacity-60 mix-blend-multiply" 
+                  style={getColorStyle()}
+                ></div>
+                <img 
+                  src={getTshirtImage()} 
+                  alt={`T-shirt ${view} view`} 
+                  className="w-full h-full object-contain"
+                />
+              </div>
             </div>
 
             {/* Render designs (text and images) on top of the T-shirt */}
             {designs.map((design) => (
               <div
                 key={design.id}
-                className={design.type === "text" ? "tshirt-text" : "tshirt-design"}
+                className={design.type === "text" ? "tshirt-text absolute" : "tshirt-design absolute"}
                 style={{
                   left: `${design.x}%`,
                   top: `${design.y}%`,
                   color: design.color,
                   fontSize: design.fontSize ? `${design.fontSize}px` : undefined,
                   fontFamily: design.fontFamily,
+                  transform: "translate(-50%, -50%)",
+                  zIndex: 10
                 }}
               >
                 {design.type === "text" ? (
