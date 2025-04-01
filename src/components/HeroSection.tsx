@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import RotatingTShirt from "./RotatingTShirt";
 
 const HeroSection = () => {
   return (
@@ -25,10 +26,9 @@ const HeroSection = () => {
         
         <div className="hidden md:flex justify-center items-center relative">
           <div className="relative w-80 h-80">
-            <img 
-              src="/lovable-uploads/9a30defd-c470-4305-9cf9-14bf4a859a41.png" 
-              alt="T-shirt Preview" 
-              className="absolute w-full h-full object-contain transform transition-all duration-500 hover:scale-110 z-10"
+            <RotatingTShirt 
+              imageUrl="/lovable-uploads/9a30defd-c470-4305-9cf9-14bf4a859a41.png"
+              className="absolute w-full h-full transform transition-all duration-500 hover:scale-110 z-10" 
             />
             <div className="absolute inset-0 bg-blue-500 rounded-full opacity-20 blur-3xl"></div>
           </div>
