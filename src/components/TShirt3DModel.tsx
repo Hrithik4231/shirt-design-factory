@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Environment, ContactShadows } from "@react-three/drei";
 import { Group } from "three";
+import * as THREE from 'three';
 
 interface TShirtModelProps {
   color: string;
@@ -42,38 +43,41 @@ function TShirtModel({ color, position = [0, 0, 0], scale = [1, 1, 1], rotation 
     }
   });
 
+  // Get the color as a THREE.Color object
+  const threeColor = getThreeColor(color);
+
   // Simple t-shirt shape using primitives since we don't have a real t-shirt model
   return (
     <group 
       ref={groupRef}
-      position={position}
-      scale={scale}
-      rotation={rotation}
+      position={position as any}
+      scale={scale as any}
+      rotation={rotation as any}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
     >
       {/* T-shirt body */}
       <mesh castShadow receiveShadow>
         <cylinderGeometry args={[1.5, 1.8, 3, 32, 1, true]} />
-        <meshStandardMaterial color={getThreeColor(color)} side={2} />
+        <meshStandardMaterial color={threeColor} side={THREE.DoubleSide} />
       </mesh>
       
       {/* Left sleeve */}
       <mesh castShadow receiveShadow position={[-1.7, -0.2, 0]} rotation={[0, 0, -Math.PI / 4]}>
         <cylinderGeometry args={[0.5, 0.4, 1.5, 32, 1, true]} />
-        <meshStandardMaterial color={getThreeColor(color)} side={2} />
+        <meshStandardMaterial color={threeColor} side={THREE.DoubleSide} />
       </mesh>
       
       {/* Right sleeve */}
       <mesh castShadow receiveShadow position={[1.7, -0.2, 0]} rotation={[0, 0, Math.PI / 4]}>
         <cylinderGeometry args={[0.5, 0.4, 1.5, 32, 1, true]} />
-        <meshStandardMaterial color={getThreeColor(color)} side={2} />
+        <meshStandardMaterial color={threeColor} side={THREE.DoubleSide} />
       </mesh>
       
       {/* Neck */}
       <mesh castShadow receiveShadow position={[0, 1.3, 0]}>
         <cylinderGeometry args={[0.7, 0.7, 0.5, 32, 1, true]} />
-        <meshStandardMaterial color={getThreeColor(color)} side={2} />
+        <meshStandardMaterial color={threeColor} side={THREE.DoubleSide} />
       </mesh>
     </group>
   );
