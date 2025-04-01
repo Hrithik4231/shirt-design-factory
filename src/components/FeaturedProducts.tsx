@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,7 +33,7 @@ const products = [
   { 
     id: 3, 
     name: "Oversized Graphic Tee", 
-    image: "/t-shirt-front.png",
+    image: "/lovable-uploads/3cd57992-4245-4eb0-b1b9-68da7fae6eea.png",
     rating: 4.6,
     reviewCount: 89,
     price: 699,
