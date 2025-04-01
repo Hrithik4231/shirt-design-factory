@@ -12,12 +12,12 @@ const HeroSection = () => {
           <p className="text-lg md:text-xl opacity-90">Create personalized t-shirts with our easy-to-use designer. Express yourself with custom prints, colors, and styles.</p>
           <div className="flex flex-wrap gap-4">
             <Link to="/customize">
-              <Button size="lg" className="bg-yellow-500 hover:bg-yellow-600 text-black">
+              <Button variant="3d-yellow" size="xl" className="font-semibold">
                 Start Designing
               </Button>
             </Link>
             <Link to="/products">
-              <Button size="lg" className="bg-white text-purple-900 hover:bg-gray-100 border-2 border-white">
+              <Button variant="3d-white" size="xl" className="font-semibold">
                 Browse Collection
               </Button>
             </Link>

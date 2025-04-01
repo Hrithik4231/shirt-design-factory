@@ -28,7 +28,7 @@ const SpecialOffers = () => {
             </ul>
             <div className="pt-4">
               <Link to="/customize">
-                <Button size="lg" className="bg-yellow-500 hover:bg-yellow-600 text-black">
+                <Button variant="3d-yellow" size="xl" className="font-semibold">
                   Design Your Own
                 </Button>
               </Link>

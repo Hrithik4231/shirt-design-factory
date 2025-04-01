@@ -59,13 +59,13 @@ const Navbar = () => {
           
           {isLoggedIn ? (
             <Link to="/profile">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:-translate-y-1 transition-transform">
                 <User className="h-5 w-5" />
               </Button>
             </Link>
           ) : (
             <Link to="/register">
-              <Button variant="outline" size="sm" className="flex items-center gap-1">
+              <Button variant="3d" size="sm" className="flex items-center gap-1 font-medium">
                 <UserPlus className="h-4 w-4" />
                 Create Account
               </Button>
@@ -73,7 +73,7 @@ const Navbar = () => {
           )}
           
           <Link to="/cart">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="hover:-translate-y-1 transition-transform">
               <ShoppingCart className="h-5 w-5" />
             </Button>
           </Link>
