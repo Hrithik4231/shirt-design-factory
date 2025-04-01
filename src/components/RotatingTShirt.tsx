@@ -1,5 +1,5 @@
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface RotatingTShirtProps {
@@ -9,6 +9,7 @@ interface RotatingTShirtProps {
 
 const RotatingTShirt = ({ imageUrl, className = "" }: RotatingTShirtProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
   
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -46,11 +47,23 @@ const RotatingTShirt = ({ imageUrl, className = "" }: RotatingTShirtProps) => {
   }, []);
 
   return (
-    <div className={`${className} transition-transform duration-300`} ref={containerRef}>
+    <div 
+      className={`${className} transition-transform duration-300`} 
+      ref={containerRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <AnimatePresence>
         <motion.div
           className="relative w-full h-full"
           style={{ transformStyle: 'preserve-3d' }}
+          animate={{
+            scale: isHovered ? 1.15 : 1
+          }}
+          transition={{
+            duration: 0.3,
+            ease: "easeOut"
+          }}
         >
           <img 
             src={imageUrl} 

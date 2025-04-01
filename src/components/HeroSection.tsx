@@ -25,12 +25,13 @@ const HeroSection = () => {
         </div>
         
         <div className="hidden md:flex justify-center items-center relative">
-          <div className="relative w-80 h-80">
+          <div className="relative w-80 h-80 cursor-pointer">
             <RotatingTShirt 
               imageUrl="/lovable-uploads/9a30defd-c470-4305-9cf9-14bf4a859a41.png"
-              className="absolute w-full h-full transform transition-all duration-500 hover:scale-110 z-10" 
+              className="absolute w-full h-full z-10" 
             />
-            <div className="absolute inset-0 bg-blue-500 rounded-full opacity-20 blur-3xl"></div>
+            <div className="absolute inset-0 bg-blue-500 rounded-full opacity-20 blur-3xl 
+              transition-transform duration-300 transform group-hover:scale-110"></div>
           </div>
         </div>
       </div>
