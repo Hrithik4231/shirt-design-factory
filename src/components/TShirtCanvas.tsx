@@ -46,6 +46,11 @@ const TShirtCanvas = ({ color, view, designs }: TShirtCanvasProps) => {
 
   // Function to get appropriate color overlay based on selected color
   const getColorStyle = () => {
+    // Don't apply any color overlay if color is white
+    if (color.toLowerCase() === "white") {
+      return { backgroundColor: "transparent" }; // Use transparent instead of a color
+    }
+
     // Map color names to their CSS color values
     const colorMap: Record<string, string> = {
       "aqua": "#5CE1E6",
@@ -95,10 +100,12 @@ const TShirtCanvas = ({ color, view, designs }: TShirtCanvasProps) => {
             {/* Base T-shirt image with color overlay */}
             <div className="absolute inset-0 w-full h-full flex items-center justify-center">
               <div className="relative w-full h-full">
-                <div 
-                  className="absolute inset-0 w-full h-full opacity-60 mix-blend-multiply" 
-                  style={getColorStyle()}
-                ></div>
+                {color.toLowerCase() !== "white" && (
+                  <div 
+                    className="absolute inset-0 w-full h-full opacity-60 mix-blend-multiply" 
+                    style={getColorStyle()}
+                  ></div>
+                )}
                 <img 
                   src={getTshirtImage()} 
                   alt={`T-shirt ${view} view`} 
