@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -23,6 +22,7 @@ export interface Design {
   isUnderline?: boolean;
   textAlign?: "left" | "center" | "right";
   isSelected?: boolean;
+  scale?: number;
 }
 
 const Index = () => {
@@ -50,6 +50,7 @@ const Index = () => {
       isUnderline: false,
       textAlign: "center",
       isSelected: true,
+      scale: 1,
     };
     
     // Deselect any previously selected design
@@ -70,6 +71,7 @@ const Index = () => {
       x: 50, // Center of the T-shirt
       y: 50, // Center of the T-shirt
       isSelected: true,
+      scale: 1,
     };
     
     // Deselect any previously selected design

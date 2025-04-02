@@ -1,8 +1,8 @@
-
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import TShirt3DModel from "./TShirt3DModel";
 import { Design } from "@/pages/Index";
+import DesignContextMenu from "./DesignContextMenu";
 
 interface TShirtCanvasProps {
   color: string;
@@ -42,7 +42,6 @@ const TShirtCanvas = ({
   const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Simulate loading the 3D model
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -50,27 +49,22 @@ const TShirtCanvas = ({
     return () => clearTimeout(timer);
   }, []);
 
-  // Get the appropriate t-shirt image based on the selected view
   const getTshirtImage = () => {
-    // Map view to the corresponding image paths
     const viewMap = {
       front: "/lovable-uploads/cbba3879-73cb-44b6-95e5-0ae6fdfc3cb6.png",
       back: "/lovable-uploads/84f13507-a711-4b89-92e1-7207b8e01500.png",
       left: "/lovable-uploads/573932bb-65fa-4af0-953a-bdb373a1e8f5.png",
-      right: "/lovable-uploads/8c1c7476-cbae-4954-8551-7297522c3d35.png" // Updated right view image with new upload
+      right: "/lovable-uploads/8c1c7476-cbae-4954-8551-7297522c3d35.png"
     };
     
     return viewMap[view] || viewMap.front;
   };
 
-  // Function to get appropriate color overlay based on selected color
   const getColorStyle = () => {
-    // Don't apply any color overlay if color is white
     if (color.toLowerCase() === "white") {
-      return { backgroundColor: "transparent" }; // Use transparent instead of a color
+      return { backgroundColor: "transparent" };
     }
 
-    // Map color names to their CSS color values
     const colorMap: Record<string, string> = {
       "aqua": "#5CE1E6",
       "white": "#FFFFFF",
@@ -108,11 +102,9 @@ const TShirtCanvas = ({
     if (dragState.isDragging && dragState.designId && canvasRef.current) {
       const rect = canvasRef.current.getBoundingClientRect();
       
-      // Calculate new position as percentage of canvas width/height
       let newX = ((e.clientX - rect.left) / rect.width) * 100 - dragState.offsetX;
       let newY = ((e.clientY - rect.top) / rect.height) * 100 - dragState.offsetY;
       
-      // Constrain to canvas bounds (with some margin)
       newX = Math.max(10, Math.min(90, newX));
       newY = Math.max(10, Math.min(90, newY));
       
@@ -138,33 +130,75 @@ const TShirtCanvas = ({
       textDecoration: design.isUnderline ? 'underline' : 'none',
       textAlign: design.textAlign || 'center',
       cursor: 'move',
+      transform: `scale(${design.scale || 1})`,
     };
     
     return (
-      <div 
-        style={textStyle}
-        onMouseDown={(e) => handleMouseDown(e, design)}
-        className={cn(
-          "select-none", 
-          design.isSelected && "outline outline-2 outline-blue-500 p-1"
-        )}
+      <DesignContextMenu 
+        design={design} 
+        onUpdate={(updates) => {
+          const designId = design.id;
+          const updatedDesigns = designs.map(d => 
+            d.id === designId ? { ...d, ...updates } : d
+          );
+          const updatedDesign = updatedDesigns.find(d => d.id === designId);
+          if (updatedDesign) {
+            onSelectDesign(designId);
+          }
+        }}
+        onDelete={() => {
+          const designId = design.id;
+          const updatedDesigns = designs.filter(d => d.id !== designId);
+        }}
       >
-        {design.content}
-      </div>
+        <div 
+          style={textStyle}
+          onMouseDown={(e) => handleMouseDown(e, design)}
+          className={cn(
+            "select-none", 
+            design.isSelected && "outline outline-2 outline-blue-500 p-1"
+          )}
+        >
+          {design.content}
+        </div>
+      </DesignContextMenu>
     );
   };
   
   const renderImageDesign = (design: Design) => {
+    const imageStyle: React.CSSProperties = {
+      transform: `scale(${design.scale || 1})`,
+    };
+    
     return (
-      <img 
-        src={design.content} 
-        alt="Design" 
-        className={cn(
-          "w-full h-full object-contain select-none cursor-move",
-          design.isSelected && "outline outline-2 outline-blue-500"
-        )}
-        onMouseDown={(e) => handleMouseDown(e, design)}
-      />
+      <DesignContextMenu 
+        design={design} 
+        onUpdate={(updates) => {
+          const designId = design.id;
+          const updatedDesigns = designs.map(d => 
+            d.id === designId ? { ...d, ...updates } : d
+          );
+          const updatedDesign = updatedDesigns.find(d => d.id === designId);
+          if (updatedDesign) {
+            onSelectDesign(designId);
+          }
+        }}
+        onDelete={() => {
+          const designId = design.id;
+          const updatedDesigns = designs.filter(d => d.id !== designId);
+        }}
+      >
+        <img 
+          src={design.content} 
+          alt="Design" 
+          style={imageStyle}
+          className={cn(
+            "w-full h-full object-contain select-none cursor-move",
+            design.isSelected && "outline outline-2 outline-blue-500"
+          )}
+          onMouseDown={(e) => handleMouseDown(e, design)}
+        />
+      </DesignContextMenu>
     );
   };
 
@@ -205,7 +239,6 @@ const TShirtCanvas = ({
           </>
         ) : (
           <>
-            {/* Base T-shirt image with color overlay */}
             <div className="absolute inset-0 w-full h-full flex items-center justify-center">
               <div className="relative w-full h-full">
                 {color.toLowerCase() !== "white" && (
@@ -222,7 +255,6 @@ const TShirtCanvas = ({
               </div>
             </div>
 
-            {/* Render designs (text and images) on top of the T-shirt */}
             {designs.map((design) => (
               <div
                 key={design.id}
