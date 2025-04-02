@@ -38,7 +38,7 @@ const TShirtCanvas = ({ color, view, designs }: TShirtCanvasProps) => {
       front: "/lovable-uploads/07e2a860-e70e-4566-bd8a-5973dcb4c228.png",
       back: "/lovable-uploads/a9685395-ef50-4e65-86a0-b3cc4dd15cd8.png",
       left: "/lovable-uploads/654ff394-ccf2-4197-a335-ad0cb1efcc32.png",
-      right: "/lovable-uploads/942023d1-8c37-428d-ba46-52cb1dee3186.png"
+      right: "/lovable-uploads/3c955401-1371-465b-88e1-9fb2db4a47ac.png" // Updated right view image
     };
     
     return viewMap[view] || viewMap.front;
