@@ -5,10 +5,11 @@ import Navbar from "@/components/Navbar";
 import TShirtCanvas from "@/components/TShirtCanvas";
 import TShirtViewSelector from "@/components/TShirtViewSelector";
 import CustomizationPanel from "@/components/CustomizationPanel";
+import TextEditToolbar from "@/components/TextEditToolbar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-interface Design {
+export interface Design {
   id: string;
   type: "text" | "image";
   content: string;
@@ -17,12 +18,18 @@ interface Design {
   fontSize?: number;
   fontFamily?: string;
   color?: string;
+  isBold?: boolean;
+  isItalic?: boolean;
+  isUnderline?: boolean;
+  textAlign?: "left" | "center" | "right";
+  isSelected?: boolean;
 }
 
 const Index = () => {
   const [tshirtColor, setTshirtColor] = useState("aqua");
   const [currentView, setCurrentView] = useState<"front" | "back" | "left" | "right">("front");
   const [designs, setDesigns] = useState<Design[]>([]);
+  const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
   
   const handleColorChange = (color: string) => {
     setTshirtColor(color);
@@ -38,9 +45,21 @@ const Index = () => {
       fontSize,
       color,
       fontFamily: "Arial, sans-serif",
+      isBold: false,
+      isItalic: false,
+      isUnderline: false,
+      textAlign: "center",
+      isSelected: true,
     };
     
-    setDesigns([...designs, newText]);
+    // Deselect any previously selected design
+    const updatedDesigns = designs.map(design => ({
+      ...design,
+      isSelected: false
+    }));
+    
+    setDesigns([...updatedDesigns, newText]);
+    setSelectedDesign(newText.id);
   };
   
   const handleAddDesign = (imageUrl: string) => {
@@ -50,9 +69,54 @@ const Index = () => {
       content: imageUrl,
       x: 50, // Center of the T-shirt
       y: 50, // Center of the T-shirt
+      isSelected: true,
     };
     
-    setDesigns([...designs, newDesign]);
+    // Deselect any previously selected design
+    const updatedDesigns = designs.map(design => ({
+      ...design,
+      isSelected: false
+    }));
+    
+    setDesigns([...updatedDesigns, newDesign]);
+    setSelectedDesign(newDesign.id);
+  };
+  
+  const handleSelectDesign = (id: string) => {
+    setSelectedDesign(id);
+    
+    setDesigns(designs.map(design => ({
+      ...design,
+      isSelected: design.id === id
+    })));
+  };
+  
+  const handleDesignMove = (id: string, x: number, y: number) => {
+    setDesigns(designs.map(design => 
+      design.id === id ? { ...design, x, y } : design
+    ));
+  };
+  
+  const handleDesignUpdate = (id: string, updates: Partial<Design>) => {
+    setDesigns(designs.map(design => 
+      design.id === id ? { ...design, ...updates } : design
+    ));
+  };
+  
+  const handleDeleteDesign = (id: string) => {
+    setDesigns(designs.filter(design => design.id !== id));
+    setSelectedDesign(null);
+  };
+  
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    // Deselect when clicking on empty canvas space
+    if ((e.target as HTMLElement).classList.contains('t-shirt-canvas-area')) {
+      setSelectedDesign(null);
+      setDesigns(designs.map(design => ({
+        ...design,
+        isSelected: false
+      })));
+    }
   };
 
   return (
@@ -88,12 +152,25 @@ const Index = () => {
                 onViewChange={setCurrentView}
               />
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm relative">
               <TShirtCanvas 
                 color={tshirtColor}
                 view={currentView}
                 designs={designs}
+                onSelectDesign={handleSelectDesign}
+                onDesignMove={handleDesignMove}
+                onCanvasClick={handleCanvasClick}
               />
+              
+              {selectedDesign && designs.find(d => d.id === selectedDesign)?.type === "text" && (
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-20">
+                  <TextEditToolbar 
+                    design={designs.find(d => d.id === selectedDesign)!}
+                    onUpdate={updates => handleDesignUpdate(selectedDesign, updates)}
+                    onDelete={() => handleDeleteDesign(selectedDesign)}
+                  />
+                </div>
+              )}
             </div>
           </div>
           

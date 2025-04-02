@@ -1,26 +1,45 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import TShirt3DModel from "./TShirt3DModel";
+import { Design } from "@/pages/Index";
 
 interface TShirtCanvasProps {
   color: string;
   view: "front" | "back" | "left" | "right";
-  designs: Array<{
-    id: string;
-    type: "text" | "image";
-    content: string;
-    x: number;
-    y: number;
-    fontSize?: number;
-    fontFamily?: string;
-    color?: string;
-  }>;
+  designs: Design[];
+  onSelectDesign: (id: string) => void;
+  onDesignMove: (id: string, x: number, y: number) => void;
+  onCanvasClick: (e: React.MouseEvent) => void;
 }
 
-const TShirtCanvas = ({ color, view, designs }: TShirtCanvasProps) => {
+const TShirtCanvas = ({ 
+  color, 
+  view, 
+  designs, 
+  onSelectDesign, 
+  onDesignMove, 
+  onCanvasClick 
+}: TShirtCanvasProps) => {
   const [show3D, setShow3D] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [dragState, setDragState] = useState<{
+    isDragging: boolean;
+    designId: string | null;
+    initialX: number;
+    initialY: number;
+    offsetX: number;
+    offsetY: number;
+  }>({
+    isDragging: false,
+    designId: null,
+    initialX: 0,
+    initialY: 0,
+    offsetX: 0,
+    offsetY: 0
+  });
+  
+  const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Simulate loading the 3D model
@@ -66,6 +85,88 @@ const TShirtCanvas = ({ color, view, designs }: TShirtCanvasProps) => {
     
     return { backgroundColor: colorMap[color.toLowerCase()] || colorMap.white };
   };
+  
+  const handleMouseDown = (e: React.MouseEvent, design: Design) => {
+    if (canvasRef.current) {
+      const rect = canvasRef.current.getBoundingClientRect();
+      
+      setDragState({
+        isDragging: true,
+        designId: design.id,
+        initialX: e.clientX,
+        initialY: e.clientY,
+        offsetX: ((e.clientX - rect.left) / rect.width) * 100 - design.x,
+        offsetY: ((e.clientY - rect.top) / rect.height) * 100 - design.y
+      });
+      
+      onSelectDesign(design.id);
+      e.stopPropagation();
+    }
+  };
+  
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (dragState.isDragging && dragState.designId && canvasRef.current) {
+      const rect = canvasRef.current.getBoundingClientRect();
+      
+      // Calculate new position as percentage of canvas width/height
+      let newX = ((e.clientX - rect.left) / rect.width) * 100 - dragState.offsetX;
+      let newY = ((e.clientY - rect.top) / rect.height) * 100 - dragState.offsetY;
+      
+      // Constrain to canvas bounds (with some margin)
+      newX = Math.max(10, Math.min(90, newX));
+      newY = Math.max(10, Math.min(90, newY));
+      
+      onDesignMove(dragState.designId, newX, newY);
+      e.stopPropagation();
+    }
+  };
+  
+  const handleMouseUp = () => {
+    setDragState({
+      ...dragState,
+      isDragging: false
+    });
+  };
+  
+  const renderTextDesign = (design: Design) => {
+    const textStyle: React.CSSProperties = {
+      fontFamily: design.fontFamily,
+      fontSize: design.fontSize ? `${design.fontSize}px` : undefined,
+      color: design.color,
+      fontWeight: design.isBold ? 'bold' : 'normal',
+      fontStyle: design.isItalic ? 'italic' : 'normal',
+      textDecoration: design.isUnderline ? 'underline' : 'none',
+      textAlign: design.textAlign || 'center',
+      cursor: 'move',
+    };
+    
+    return (
+      <div 
+        style={textStyle}
+        onMouseDown={(e) => handleMouseDown(e, design)}
+        className={cn(
+          "select-none", 
+          design.isSelected && "outline outline-2 outline-blue-500 p-1"
+        )}
+      >
+        {design.content}
+      </div>
+    );
+  };
+  
+  const renderImageDesign = (design: Design) => {
+    return (
+      <img 
+        src={design.content} 
+        alt="Design" 
+        className={cn(
+          "w-full h-full object-contain select-none cursor-move",
+          design.isSelected && "outline outline-2 outline-blue-500"
+        )}
+        onMouseDown={(e) => handleMouseDown(e, design)}
+      />
+    );
+  };
 
   return (
     <div className="space-y-4">
@@ -84,7 +185,14 @@ const TShirtCanvas = ({ color, view, designs }: TShirtCanvasProps) => {
         </button>
       </div>
 
-      <div className="relative w-full h-full aspect-[3/4] bg-white rounded-md shadow-sm overflow-hidden">
+      <div 
+        ref={canvasRef}
+        className="relative w-full h-full aspect-[3/4] bg-white rounded-md shadow-sm overflow-hidden t-shirt-canvas-area"
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onClick={onCanvasClick}
+      >
         {show3D ? (
           <>
             {isLoading ? (
@@ -122,18 +230,12 @@ const TShirtCanvas = ({ color, view, designs }: TShirtCanvasProps) => {
                 style={{
                   left: `${design.x}%`,
                   top: `${design.y}%`,
-                  color: design.color,
-                  fontSize: design.fontSize ? `${design.fontSize}px` : undefined,
-                  fontFamily: design.fontFamily,
                   transform: "translate(-50%, -50%)",
-                  zIndex: 10
+                  zIndex: design.isSelected ? 20 : 10,
+                  maxWidth: "80%"
                 }}
               >
-                {design.type === "text" ? (
-                  <p>{design.content}</p>
-                ) : (
-                  <img src={design.content} alt="Design" className="w-full h-full object-contain" />
-                )}
+                {design.type === "text" ? renderTextDesign(design) : renderImageDesign(design)}
               </div>
             ))}
           </>

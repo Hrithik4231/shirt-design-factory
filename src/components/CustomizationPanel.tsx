@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,13 @@ import {
   Shirt, 
   Image as ImageIcon, 
   Info, 
-  Share as ShareIcon 
+  Share as ShareIcon,
+  Bold,
+  Italic,
+  Underline,
+  AlignLeft,
+  AlignCenter,
+  AlignRight
 } from 'lucide-react';
 import { toast } from "sonner";
 
@@ -29,6 +34,10 @@ const CustomizationPanel = ({
   const [textInput, setTextInput] = useState("");
   const [fontSize, setFontSize] = useState(24);
   const [textColor, setTextColor] = useState("#000000");
+  const [isBold, setIsBold] = useState(false);
+  const [isItalic, setIsItalic] = useState(false);
+  const [isUnderline, setIsUnderline] = useState(false);
+  const [textAlign, setTextAlign] = useState<"left" | "center" | "right">("center");
 
   const colors = [
     { name: "Aqua", value: "aqua" },
@@ -57,7 +66,7 @@ const CustomizationPanel = ({
     if (textInput.trim()) {
       onAddText(textInput, fontSize, textColor);
       setTextInput("");
-      toast.success("Text added to design!");
+      toast.success("Text added to design! You can now drag it to position and use the toolbar to format it.");
     } else {
       toast.error("Please enter some text first!");
     }
@@ -104,7 +113,7 @@ const CustomizationPanel = ({
           </DialogContent>
         </Dialog>
 
-        {/* Add Text */}
+        {/* Add Text - Enhanced with formatting options */}
         <Dialog>
           <DialogTrigger asChild>
             <div className="flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
@@ -112,7 +121,7 @@ const CustomizationPanel = ({
               <span className="text-sm font-medium">Add Text</span>
             </div>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>Add Text to Your Design</DialogTitle>
             </DialogHeader>
@@ -126,6 +135,7 @@ const CustomizationPanel = ({
                   onChange={(e) => setTextInput(e.target.value)}
                 />
               </div>
+              
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="font-size">Font Size</Label>
@@ -149,7 +159,101 @@ const CustomizationPanel = ({
                   />
                 </div>
               </div>
-              <Button className="w-full" onClick={handleAddText}>Add Text to Design</Button>
+              
+              <div className="space-y-2">
+                <Label>Text Formatting</Label>
+                <div className="flex space-x-2">
+                  <Button 
+                    type="button" 
+                    variant={isBold ? "default" : "outline"} 
+                    size="sm"
+                    onClick={() => setIsBold(!isBold)}
+                    className="h-9 px-3"
+                  >
+                    <Bold className="h-4 w-4" />
+                  </Button>
+                  
+                  <Button 
+                    type="button" 
+                    variant={isItalic ? "default" : "outline"} 
+                    size="sm"
+                    onClick={() => setIsItalic(!isItalic)}
+                    className="h-9 px-3"
+                  >
+                    <Italic className="h-4 w-4" />
+                  </Button>
+                  
+                  <Button 
+                    type="button" 
+                    variant={isUnderline ? "default" : "outline"} 
+                    size="sm"
+                    onClick={() => setIsUnderline(!isUnderline)}
+                    className="h-9 px-3"
+                  >
+                    <Underline className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Text Alignment</Label>
+                <div className="flex space-x-2">
+                  <Button 
+                    type="button" 
+                    variant={textAlign === "left" ? "default" : "outline"} 
+                    size="sm"
+                    onClick={() => setTextAlign("left")}
+                    className="h-9 px-3 flex-1"
+                  >
+                    <AlignLeft className="h-4 w-4 mr-2" />
+                    <span>Left</span>
+                  </Button>
+                  
+                  <Button 
+                    type="button" 
+                    variant={textAlign === "center" ? "default" : "outline"} 
+                    size="sm"
+                    onClick={() => setTextAlign("center")}
+                    className="h-9 px-3 flex-1"
+                  >
+                    <AlignCenter className="h-4 w-4 mr-2" />
+                    <span>Center</span>
+                  </Button>
+                  
+                  <Button 
+                    type="button" 
+                    variant={textAlign === "right" ? "default" : "outline"} 
+                    size="sm"
+                    onClick={() => setTextAlign("right")}
+                    className="h-9 px-3 flex-1"
+                  >
+                    <AlignRight className="h-4 w-4 mr-2" />
+                    <span>Right</span>
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="pt-2">
+                <Button className="w-full" onClick={handleAddText}>Add Text to Design</Button>
+              </div>
+              
+              {textInput && (
+                <div className="mt-4 p-4 border rounded-lg">
+                  <p className="text-sm font-medium mb-2">Preview:</p>
+                  <p 
+                    style={{
+                      fontWeight: isBold ? 'bold' : 'normal',
+                      fontStyle: isItalic ? 'italic' : 'normal',
+                      textDecoration: isUnderline ? 'underline' : 'none',
+                      color: textColor,
+                      fontSize: `${fontSize}px`,
+                      textAlign: textAlign
+                    }}
+                  >
+                    {textInput}
+                  </p>
+                </div>
+              )}
             </div>
           </DialogContent>
         </Dialog>
