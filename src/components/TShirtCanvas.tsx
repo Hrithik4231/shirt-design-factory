@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import TShirt3DModel from "./TShirt3DModel";
@@ -39,6 +40,20 @@ const TShirtCanvas = ({
     offsetY: 0
   });
   
+  const [resizeState, setResizeState] = useState<{
+    isResizing: boolean;
+    designId: string | null;
+    initialWidth: number;
+    initialHeight: number;
+    corner: string | null;
+  }>({
+    isResizing: false,
+    designId: null,
+    initialWidth: 0,
+    initialHeight: 0,
+    corner: null
+  });
+  
   const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,6 +63,56 @@ const TShirtCanvas = ({
     
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (resizeState.isResizing) {
+      const handleMouseMove = (e: MouseEvent) => {
+        if (resizeState.isResizing && resizeState.designId && canvasRef.current) {
+          const design = designs.find(d => d.id === resizeState.designId);
+          if (!design) return;
+          
+          const rect = canvasRef.current.getBoundingClientRect();
+          const mouseX = ((e.clientX - rect.left) / rect.width) * 100;
+          const mouseY = ((e.clientY - rect.top) / rect.height) * 100;
+          
+          // Calculate distance from center as a scaling factor
+          const designX = design.x;
+          const designY = design.y;
+          
+          // Determine the distance which will be used as a scale factor
+          const dx = Math.abs(mouseX - designX) / 25; // Adjust divisor to control sensitivity
+          const dy = Math.abs(mouseY - designY) / 25;
+          
+          // Use the larger of the two dimensions to determine scale
+          const newScale = Math.max(0.5, Math.min(2, Math.max(dx, dy)));
+          
+          const updatedDesigns = designs.map(d => 
+            d.id === resizeState.designId ? { ...d, scale: newScale } : d
+          );
+        }
+        
+        e.preventDefault();
+      };
+      
+      const handleMouseUp = () => {
+        setResizeState({
+          isResizing: false,
+          designId: null,
+          initialWidth: 0,
+          initialHeight: 0,
+          corner: null
+        });
+      };
+      
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [resizeState, designs]);
 
   const getTshirtImage = () => {
     const viewMap = {
@@ -98,6 +163,22 @@ const TShirtCanvas = ({
     }
   };
   
+  const handleResizeMouseDown = (e: React.MouseEvent, design: Design, corner: string) => {
+    if (canvasRef.current) {
+      e.stopPropagation();
+      
+      setResizeState({
+        isResizing: true,
+        designId: design.id,
+        initialWidth: 0,
+        initialHeight: 0,
+        corner: corner
+      });
+      
+      onSelectDesign(design.id);
+    }
+  };
+  
   const handleMouseMove = (e: React.MouseEvent) => {
     if (dragState.isDragging && dragState.designId && canvasRef.current) {
       const rect = canvasRef.current.getBoundingClientRect();
@@ -131,6 +212,9 @@ const TShirtCanvas = ({
       textAlign: design.textAlign || 'center',
       cursor: 'move',
       transform: `scale(${design.scale || 1})`,
+      transformOrigin: 'center center',
+      maxWidth: '200px',
+      position: 'relative'
     };
     
     return (
@@ -151,15 +235,31 @@ const TShirtCanvas = ({
           const updatedDesigns = designs.filter(d => d.id !== designId);
         }}
       >
-        <div 
-          style={textStyle}
-          onMouseDown={(e) => handleMouseDown(e, design)}
-          className={cn(
-            "select-none", 
-            design.isSelected && "outline outline-2 outline-blue-500 p-1"
+        <div className="relative group">
+          <div 
+            style={textStyle}
+            onMouseDown={(e) => handleMouseDown(e, design)}
+            className={cn(
+              "select-none", 
+              design.isSelected && "outline outline-2 outline-blue-500"
+            )}
+          >
+            {design.content}
+          </div>
+          
+          {design.isSelected && (
+            <>
+              {/* Resize handles */}
+              <div className="absolute -top-2 -left-2 w-4 h-4 bg-white border border-blue-500 rounded-full cursor-nw-resize z-20"
+                   onMouseDown={(e) => handleResizeMouseDown(e, design, 'top-left')} />
+              <div className="absolute -top-2 -right-2 w-4 h-4 bg-white border border-blue-500 rounded-full cursor-ne-resize z-20"
+                   onMouseDown={(e) => handleResizeMouseDown(e, design, 'top-right')} />
+              <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-white border border-blue-500 rounded-full cursor-sw-resize z-20"
+                   onMouseDown={(e) => handleResizeMouseDown(e, design, 'bottom-left')} />
+              <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-white border border-blue-500 rounded-full cursor-se-resize z-20"
+                   onMouseDown={(e) => handleResizeMouseDown(e, design, 'bottom-right')} />
+            </>
           )}
-        >
-          {design.content}
         </div>
       </DesignContextMenu>
     );
@@ -168,6 +268,7 @@ const TShirtCanvas = ({
   const renderImageDesign = (design: Design) => {
     const imageStyle: React.CSSProperties = {
       transform: `scale(${design.scale || 1})`,
+      transformOrigin: 'center center',
     };
     
     return (
@@ -188,16 +289,32 @@ const TShirtCanvas = ({
           const updatedDesigns = designs.filter(d => d.id !== designId);
         }}
       >
-        <img 
-          src={design.content} 
-          alt="Design" 
-          style={imageStyle}
-          className={cn(
-            "w-full h-full object-contain select-none cursor-move",
-            design.isSelected && "outline outline-2 outline-blue-500"
+        <div className="relative group">
+          <img 
+            src={design.content} 
+            alt="Design" 
+            style={imageStyle}
+            className={cn(
+              "w-full h-full object-contain select-none cursor-move",
+              design.isSelected && "outline outline-2 outline-blue-500"
+            )}
+            onMouseDown={(e) => handleMouseDown(e, design)}
+          />
+          
+          {design.isSelected && (
+            <>
+              {/* Resize handles */}
+              <div className="absolute -top-2 -left-2 w-4 h-4 bg-white border border-blue-500 rounded-full cursor-nw-resize z-20"
+                   onMouseDown={(e) => handleResizeMouseDown(e, design, 'top-left')} />
+              <div className="absolute -top-2 -right-2 w-4 h-4 bg-white border border-blue-500 rounded-full cursor-ne-resize z-20"
+                   onMouseDown={(e) => handleResizeMouseDown(e, design, 'top-right')} />
+              <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-white border border-blue-500 rounded-full cursor-sw-resize z-20"
+                   onMouseDown={(e) => handleResizeMouseDown(e, design, 'bottom-left')} />
+              <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-white border border-blue-500 rounded-full cursor-se-resize z-20"
+                   onMouseDown={(e) => handleResizeMouseDown(e, design, 'bottom-right')} />
+            </>
           )}
-          onMouseDown={(e) => handleMouseDown(e, design)}
-        />
+        </div>
       </DesignContextMenu>
     );
   };
