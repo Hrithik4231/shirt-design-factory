@@ -35,7 +35,7 @@ const TShirtCanvas = ({ color, view, designs }: TShirtCanvasProps) => {
   const getTshirtImage = () => {
     // Map view to the corresponding image paths
     const viewMap = {
-      front: "/lovable-uploads/65186a80-a920-449a-aec0-8604fca41066.png",
+      front: "/lovable-uploads/07e2a860-e70e-4566-bd8a-5973dcb4c228.png",
       back: "/lovable-uploads/a9685395-ef50-4e65-86a0-b3cc4dd15cd8.png",
       left: "/lovable-uploads/654ff394-ccf2-4197-a335-ad0cb1efcc32.png",
       right: "/lovable-uploads/942023d1-8c37-428d-ba46-52cb1dee3186.png"
