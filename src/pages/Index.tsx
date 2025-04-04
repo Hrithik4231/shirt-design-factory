@@ -26,11 +26,26 @@ export interface Design {
   scale?: number;
 }
 
+export interface DesignsByView {
+  front: Design[];
+  back: Design[];
+  left: Design[];
+  right: Design[];
+}
+
 const Index = () => {
   const [tshirtColor, setTshirtColor] = useState("aqua");
   const [currentView, setCurrentView] = useState<"front" | "back" | "left" | "right">("front");
-  const [designs, setDesigns] = useState<Design[]>([]);
+  const [designsByView, setDesignsByView] = useState<DesignsByView>({
+    front: [],
+    back: [],
+    left: [],
+    right: []
+  });
   const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
+  
+  // Get current view's designs
+  const designs = designsByView[currentView];
   
   const handleColorChange = (color: string) => {
     setTshirtColor(color);
@@ -60,7 +75,12 @@ const Index = () => {
       isSelected: false
     }));
     
-    setDesigns([...updatedDesigns, newText]);
+    // Update designs for current view only
+    setDesignsByView({
+      ...designsByView,
+      [currentView]: [...updatedDesigns, newText]
+    });
+    
     setSelectedDesign(newText.id);
   };
   
@@ -81,33 +101,55 @@ const Index = () => {
       isSelected: false
     }));
     
-    setDesigns([...updatedDesigns, newDesign]);
+    // Update designs for current view only
+    setDesignsByView({
+      ...designsByView,
+      [currentView]: [...updatedDesigns, newDesign]
+    });
+    
     setSelectedDesign(newDesign.id);
   };
   
   const handleSelectDesign = (id: string) => {
     setSelectedDesign(id);
     
-    setDesigns(designs.map(design => ({
-      ...design,
-      isSelected: design.id === id
-    })));
+    // Update designs for current view only
+    setDesignsByView({
+      ...designsByView,
+      [currentView]: designs.map(design => ({
+        ...design,
+        isSelected: design.id === id
+      }))
+    });
   };
   
   const handleDesignMove = (id: string, x: number, y: number) => {
-    setDesigns(designs.map(design => 
-      design.id === id ? { ...design, x, y } : design
-    ));
+    // Update designs for current view only
+    setDesignsByView({
+      ...designsByView,
+      [currentView]: designs.map(design => 
+        design.id === id ? { ...design, x, y } : design
+      )
+    });
   };
   
   const handleDesignUpdate = (id: string, updates: Partial<Design>) => {
-    setDesigns(designs.map(design => 
-      design.id === id ? { ...design, ...updates } : design
-    ));
+    // Update designs for current view only
+    setDesignsByView({
+      ...designsByView,
+      [currentView]: designs.map(design => 
+        design.id === id ? { ...design, ...updates } : design
+      )
+    });
   };
   
   const handleDeleteDesign = (id: string) => {
-    setDesigns(designs.filter(design => design.id !== id));
+    // Update designs for current view only
+    setDesignsByView({
+      ...designsByView,
+      [currentView]: designs.filter(design => design.id !== id)
+    });
+    
     setSelectedDesign(null);
   };
   
@@ -121,11 +163,34 @@ const Index = () => {
       target.classList.contains('t-shirt-background')
     ) {
       setSelectedDesign(null);
-      setDesigns(designs.map(design => ({
-        ...design,
-        isSelected: false
-      })));
+      
+      // Update designs for current view only
+      setDesignsByView({
+        ...designsByView,
+        [currentView]: designs.map(design => ({
+          ...design,
+          isSelected: false
+        }))
+      });
     }
+  };
+  
+  // Handler for view change
+  const handleViewChange = (view: "front" | "back" | "left" | "right") => {
+    // Deselect any selected design before changing view
+    if (selectedDesign) {
+      setDesignsByView({
+        ...designsByView,
+        [currentView]: designs.map(design => ({
+          ...design,
+          isSelected: false
+        }))
+      });
+      setSelectedDesign(null);
+    }
+    
+    // Change view
+    setCurrentView(view);
   };
 
   return (
@@ -149,7 +214,7 @@ const Index = () => {
           <div className="hidden md:block">
             <TShirtViewSelector 
               currentView={currentView}
-              onViewChange={setCurrentView}
+              onViewChange={handleViewChange}
             />
           </div>
           
@@ -158,7 +223,7 @@ const Index = () => {
             <div className="bg-white p-4 rounded-lg shadow-sm mb-4 flex md:hidden">
               <TShirtViewSelector 
                 currentView={currentView}
-                onViewChange={setCurrentView}
+                onViewChange={handleViewChange}
               />
             </div>
             <div className="bg-white p-4 rounded-lg shadow-sm relative">
