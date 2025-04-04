@@ -84,34 +84,26 @@ const TShirtCanvas = ({
           // Determine scale direction based on corner and mouse movement
           const direction = 
             (resizeState.corner?.includes('top') || resizeState.corner?.includes('left'))
-              ? (dx < 0 || dy < 0 ? 1 : -1)
+              ? (dx < 0 || dy < 0 ? -1 : 1)
               : (dx > 0 || dy > 0 ? 1 : -1);
           
           // Calculate new scale based on initial scale and distance moved
-          // Using distance as a scaling factor (adjust multiplier for sensitivity)
-          const scaleChange = 1 + (direction * distance * 0.01);
-          let newScale = resizeState.initialScale * scaleChange;
+          const scaleFactor = 0.01; // Adjust this value to control resize sensitivity
+          const newScale = resizeState.initialScale + (direction * distance * scaleFactor);
           
-          // Clamp scale to reasonable limits
-          newScale = Math.max(0.5, Math.min(3, newScale));
+          // Clamp scale to reasonable limits (0.5 to 3)
+          const clampedScale = Math.max(0.5, Math.min(3, newScale));
           
-          // Update the design scale
-          onDesignMove(design.id, design.x, design.y); // Keep position same
-          
-          // Update the design's scale
-          const updatedDesigns = designs.map(d => 
-            d.id === resizeState.designId ? { ...d, scale: newScale } : d
-          );
-          
-          // Note: In a real implementation, you'd update the parent state here
-          // For this example, we're directly updating the scale through onUpdate
-          if (design.scale !== newScale) {
-            const updates = { scale: newScale };
-            // Find the design in the parent component and update it
+          // Find the design and update it
+          const designIndex = designs.findIndex(d => d.id === resizeState.designId);
+          if (designIndex >= 0) {
+            // Create a direct update for the parent component
+            const updatedDesign = { ...designs[designIndex], scale: clampedScale };
+            
+            // Notify the parent component about the resize
             const designToUpdate = designs.find(d => d.id === resizeState.designId);
-            if (designToUpdate) {
-              // Update the scale
-              designToUpdate.scale = newScale;
+            if (designToUpdate && designToUpdate.scale !== clampedScale) {
+              designToUpdate.scale = clampedScale;
             }
           }
         }
@@ -168,7 +160,7 @@ const TShirtCanvas = ({
     
     return { backgroundColor: colorMap[color.toLowerCase()] || colorMap.white };
   };
-  
+
   const handleMouseDown = (e: React.MouseEvent, design: Design) => {
     if (canvasRef.current) {
       const rect = canvasRef.current.getBoundingClientRect();
@@ -190,6 +182,7 @@ const TShirtCanvas = ({
   const handleResizeMouseDown = (e: React.MouseEvent, design: Design, corner: string) => {
     if (canvasRef.current) {
       e.stopPropagation();
+      e.preventDefault();
       
       setResizeState({
         isResizing: true,
@@ -229,7 +222,7 @@ const TShirtCanvas = ({
   const renderTextDesign = (design: Design) => {
     const textStyle: React.CSSProperties = {
       fontFamily: design.fontFamily,
-      fontSize: design.fontSize ? `${design.fontSize * (design.scale || 1)}px` : undefined,
+      fontSize: `${(design.fontSize || 16) * (design.scale || 1)}px`,
       color: design.color,
       fontWeight: design.isBold ? 'bold' : 'normal',
       fontStyle: design.isItalic ? 'italic' : 'normal',
@@ -256,7 +249,7 @@ const TShirtCanvas = ({
         }}
         onDelete={() => {
           const designId = design.id;
-          const updatedDesigns = designs.filter(d => d.id !== designId);
+          const filteredDesigns = designs.filter(d => d.id !== designId);
         }}
       >
         <div className="relative group">
@@ -293,7 +286,8 @@ const TShirtCanvas = ({
     const imageStyle: React.CSSProperties = {
       transform: `scale(${design.scale || 1})`,
       transformOrigin: 'center center',
-      maxWidth: '100%', // Ensure image doesn't overflow its container
+      maxWidth: '100%',
+      maxHeight: '100%',
     };
     
     return (
@@ -311,7 +305,7 @@ const TShirtCanvas = ({
         }}
         onDelete={() => {
           const designId = design.id;
-          const updatedDesigns = designs.filter(d => d.id !== designId);
+          const filteredDesigns = designs.filter(d => d.id !== designId);
         }}
       >
         <div className="relative group">
