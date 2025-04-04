@@ -112,8 +112,14 @@ const Index = () => {
   };
   
   const handleCanvasClick = (e: React.MouseEvent) => {
-    // Deselect when clicking on empty canvas space
-    if ((e.target as HTMLElement).classList.contains('t-shirt-canvas-area')) {
+    // Improved canvas click handler to deselect all designs when clicking on empty canvas
+    const target = e.target as HTMLElement;
+    
+    // Check if the click is directly on the canvas or t-shirt background
+    if (
+      target.classList.contains('t-shirt-canvas-area') || 
+      target.classList.contains('t-shirt-background')
+    ) {
       setSelectedDesign(null);
       setDesigns(designs.map(design => ({
         ...design,

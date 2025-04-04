@@ -74,33 +74,24 @@ const TShirtCanvas = ({
           
           const rect = canvasRef.current.getBoundingClientRect();
           
-          // Calculate distance moved from starting point
           const dx = e.clientX - resizeState.startX;
           const dy = e.clientY - resizeState.startY;
           
-          // Use the larger of the absolute values for consistent scaling
           const distance = Math.max(Math.abs(dx), Math.abs(dy));
           
-          // Determine scale direction based on corner and mouse movement
           const direction = 
             (resizeState.corner?.includes('top') || resizeState.corner?.includes('left'))
               ? (dx < 0 || dy < 0 ? -1 : 1)
               : (dx > 0 || dy > 0 ? 1 : -1);
           
-          // Calculate new scale based on initial scale and distance moved
-          const scaleFactor = 0.01; // Adjust this value to control resize sensitivity
+          const scaleFactor = 0.01;
           const newScale = resizeState.initialScale + (direction * distance * scaleFactor);
           
-          // Clamp scale to reasonable limits (0.5 to 3)
           const clampedScale = Math.max(0.5, Math.min(3, newScale));
           
-          // Find the design and update it
           const designIndex = designs.findIndex(d => d.id === resizeState.designId);
           if (designIndex >= 0) {
-            // Create a direct update for the parent component
             const updatedDesign = { ...designs[designIndex], scale: clampedScale };
-            
-            // Notify the parent component about the resize
             const designToUpdate = designs.find(d => d.id === resizeState.designId);
             if (designToUpdate && designToUpdate.scale !== clampedScale) {
               designToUpdate.scale = clampedScale;
@@ -219,6 +210,17 @@ const TShirtCanvas = ({
     });
   };
   
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    
+    if (
+      target.classList.contains('t-shirt-canvas-area') || 
+      target.classList.contains('t-shirt-background')
+    ) {
+      onCanvasClick(e);
+    }
+  };
+  
   const renderTextDesign = (design: Design) => {
     const textStyle: React.CSSProperties = {
       fontFamily: design.fontFamily,
@@ -266,7 +268,6 @@ const TShirtCanvas = ({
           
           {design.isSelected && (
             <>
-              {/* Resize handles */}
               <div className="absolute -top-2 -left-2 w-4 h-4 bg-white border border-blue-500 rounded-full cursor-nw-resize z-20"
                    onMouseDown={(e) => handleResizeMouseDown(e, design, 'top-left')} />
               <div className="absolute -top-2 -right-2 w-4 h-4 bg-white border border-blue-500 rounded-full cursor-ne-resize z-20"
@@ -322,7 +323,6 @@ const TShirtCanvas = ({
           
           {design.isSelected && (
             <>
-              {/* Resize handles */}
               <div className="absolute -top-2 -left-2 w-4 h-4 bg-white border border-blue-500 rounded-full cursor-nw-resize z-20"
                    onMouseDown={(e) => handleResizeMouseDown(e, design, 'top-left')} />
               <div className="absolute -top-2 -right-2 w-4 h-4 bg-white border border-blue-500 rounded-full cursor-ne-resize z-20"
@@ -361,7 +361,7 @@ const TShirtCanvas = ({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        onClick={onCanvasClick}
+        onClick={handleCanvasClick}
       >
         {show3D ? (
           <>
@@ -375,18 +375,18 @@ const TShirtCanvas = ({
           </>
         ) : (
           <>
-            <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+            <div className="absolute inset-0 w-full h-full flex items-center justify-center t-shirt-background">
               <div className="relative w-full h-full">
                 {color.toLowerCase() !== "white" && (
                   <div 
-                    className="absolute inset-0 w-full h-full opacity-60 mix-blend-multiply" 
+                    className="absolute inset-0 w-full h-full opacity-60 mix-blend-multiply t-shirt-background" 
                     style={getColorStyle()}
                   ></div>
                 )}
                 <img 
                   src={getTshirtImage()} 
                   alt={`T-shirt ${view} view`} 
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain t-shirt-background"
                 />
               </div>
             </div>
