@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -7,7 +6,8 @@ import TShirtViewSelector from "@/components/TShirtViewSelector";
 import CustomizationPanel from "@/components/CustomizationPanel";
 import TextEditToolbar from "@/components/TextEditToolbar";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, View3d } from "lucide-react";
+import TShirt3DPreviewModal from "@/components/TShirt3DPreviewModal";
 
 export interface Design {
   id: string;
@@ -43,6 +43,7 @@ const Index = () => {
     right: []
   });
   const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
+  const [is3DPreviewOpen, setIs3DPreviewOpen] = useState(false);
   
   // Get current view's designs
   const designs = designsByView[currentView];
@@ -246,6 +247,17 @@ const Index = () => {
                 </div>
               )}
             </div>
+            
+            {/* 3D Preview Button */}
+            <div className="mt-4 flex justify-center">
+              <Button 
+                onClick={() => setIs3DPreviewOpen(true)}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+              >
+                <View3d className="mr-2 h-5 w-5" />
+                View Final Design in 3D
+              </Button>
+            </div>
           </div>
           
           {/* Right sidebar - Customization Panel */}
@@ -258,6 +270,14 @@ const Index = () => {
           </div>
         </div>
       </main>
+      
+      {/* 3D Preview Modal */}
+      <TShirt3DPreviewModal
+        isOpen={is3DPreviewOpen}
+        onClose={() => setIs3DPreviewOpen(false)}
+        tshirtColor={tshirtColor}
+        designsByView={designsByView}
+      />
       
       <footer className="bg-white border-t py-6">
         <div className="container mx-auto px-4 text-center text-gray-600">
