@@ -6,7 +6,7 @@ import TShirtViewSelector from "@/components/TShirtViewSelector";
 import CustomizationPanel from "@/components/CustomizationPanel";
 import TextEditToolbar from "@/components/TextEditToolbar";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, View3d } from "lucide-react";
+import { ArrowLeft, Scale3d } from "lucide-react";
 import TShirt3DPreviewModal from "@/components/TShirt3DPreviewModal";
 
 export interface Design {
@@ -254,7 +254,7 @@ const Index = () => {
                 onClick={() => setIs3DPreviewOpen(true)}
                 className="bg-gradient-to-r from-blue-500 to-purple-600 text-white"
               >
-                <View3d className="mr-2 h-5 w-5" />
+                <Scale3d className="mr-2 h-5 w-5" />
                 View Final Design in 3D
               </Button>
             </div>
