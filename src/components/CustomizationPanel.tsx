@@ -16,7 +16,8 @@ import {
   Underline,
   AlignLeft,
   AlignCenter,
-  AlignRight
+  AlignRight,
+  ShoppingCart
 } from 'lucide-react';
 import { toast } from "sonner";
 
@@ -24,12 +25,20 @@ interface CustomizationPanelProps {
   onColorChange: (color: string) => void;
   onAddText: (text: string, fontSize: number, color: string) => void;
   onAddDesign: (imageUrl: string) => void;
+  onSaveToCart?: (cartItem: any) => void;
+  tshirtColor?: string;
+  designs?: any[];
+  currentView?: string;
 }
 
 const CustomizationPanel = ({ 
   onColorChange, 
   onAddText, 
-  onAddDesign 
+  onAddDesign,
+  onSaveToCart,
+  tshirtColor = "aqua",
+  designs = [],
+  currentView = "front"
 }: CustomizationPanelProps) => {
   const [textInput, setTextInput] = useState("");
   const [fontSize, setFontSize] = useState(24);
@@ -73,7 +82,23 @@ const CustomizationPanel = ({
   };
 
   const handleSaveProduct = () => {
-    toast.success("Your design has been saved!");
+    if (onSaveToCart) {
+      const cartItem = {
+        id: `tshirt-${Date.now()}`,
+        name: "Custom T-Shirt Design",
+        price: 24.99,
+        color: tshirtColor,
+        designs: designs,
+        currentView: currentView,
+        quantity: 1,
+        addedAt: new Date().toISOString()
+      };
+      
+      onSaveToCart(cartItem);
+      toast.success("Your custom t-shirt has been saved to cart!");
+    } else {
+      toast.success("Your design has been saved!");
+    }
   };
 
   return (
@@ -424,13 +449,14 @@ const CustomizationPanel = ({
         </Dialog>
       </div>
 
-      {/* Proceed Button */}
+      {/* Updated Proceed Button */}
       <div className="mt-8">
         <Button 
-          className="w-full bg-brand-blue hover:bg-brand-lightblue py-6 text-lg"
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-all duration-200 flex items-center justify-center gap-2"
           onClick={handleSaveProduct}
         >
-          Save & Proceed
+          <ShoppingCart className="h-5 w-5" />
+          Save & Add to Cart
         </Button>
       </div>
     </div>

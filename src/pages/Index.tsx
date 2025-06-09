@@ -5,6 +5,7 @@ import TShirtCanvas from "@/components/TShirtCanvas";
 import TShirtViewSelector from "@/components/TShirtViewSelector";
 import CustomizationPanel from "@/components/CustomizationPanel";
 import TextEditToolbar from "@/components/TextEditToolbar";
+import Cart from "@/components/Cart";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Scale3d } from "lucide-react";
 import TShirt3DPreviewModal from "@/components/TShirt3DPreviewModal";
@@ -33,6 +34,17 @@ export interface DesignsByView {
   right: Design[];
 }
 
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  color: string;
+  designs: any[];
+  currentView: string;
+  quantity: number;
+  addedAt: string;
+}
+
 const Index = () => {
   const [tshirtColor, setTshirtColor] = useState("aqua");
   const [currentView, setCurrentView] = useState<"front" | "back" | "left" | "right">("front");
@@ -44,6 +56,7 @@ const Index = () => {
   });
   const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
   const [is3DPreviewOpen, setIs3DPreviewOpen] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   
   // Get current view's designs
   const designs = designsByView[currentView];
@@ -194,16 +207,55 @@ const Index = () => {
     setCurrentView(view);
   };
 
+  const handleSaveToCart = (cartItem: CartItem) => {
+    setCartItems(prevItems => [...prevItems, cartItem]);
+  };
+
+  const handleUpdateQuantity = (id: string, quantity: number) => {
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.id === id ? { ...item, quantity } : item
+      )
+    );
+  };
+
+  const handleRemoveFromCart = (id: string) => {
+    setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+  };
+
+  const handleEditCartItem = (id: string) => {
+    // Find the cart item and load its design back to the editor
+    const cartItem = cartItems.find(item => item.id === id);
+    if (cartItem) {
+      setTshirtColor(cartItem.color);
+      setCurrentView(cartItem.currentView as "front" | "back" | "left" | "right");
+      setDesignsByView({
+        front: cartItem.currentView === "front" ? cartItem.designs : [],
+        back: cartItem.currentView === "back" ? cartItem.designs : [],
+        left: cartItem.currentView === "left" ? cartItem.designs : [],
+        right: cartItem.currentView === "right" ? cartItem.designs : []
+      });
+      // Remove the item from cart since we're editing it
+      handleRemoveFromCart(id);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       
       <div className="bg-white shadow-sm py-3 px-4">
-        <div className="container mx-auto flex items-center">
+        <div className="container mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center text-gray-600 hover:text-blue-500">
             <ArrowLeft className="h-5 w-5 mr-2" />
             <span>Back to Shop</span>
           </Link>
+          <Cart 
+            cartItems={cartItems}
+            onUpdateQuantity={handleUpdateQuantity}
+            onRemoveItem={handleRemoveFromCart}
+            onEditItem={handleEditCartItem}
+          />
         </div>
       </div>
       
@@ -266,6 +318,10 @@ const Index = () => {
               onColorChange={handleColorChange}
               onAddText={handleAddText}
               onAddDesign={handleAddDesign}
+              onSaveToCart={handleSaveToCart}
+              tshirtColor={tshirtColor}
+              designs={designs}
+              currentView={currentView}
             />
           </div>
         </div>
