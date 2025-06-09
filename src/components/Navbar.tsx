@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, User, Phone, UserPlus } from "lucide-react";
+import { User, Phone, UserPlus } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const Navbar = () => {
@@ -71,12 +71,6 @@ const Navbar = () => {
               </Button>
             </Link>
           )}
-          
-          <Link to="/cart">
-            <Button variant="ghost" size="icon" className="hover:-translate-y-1 transition-transform">
-              <ShoppingCart className="h-5 w-5" />
-            </Button>
-          </Link>
         </div>
       </div>
     </header>
