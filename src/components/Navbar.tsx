@@ -34,9 +34,11 @@ const Navbar = () => {
     <header className="bg-white shadow-sm border-b">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         <Link to="/" className="flex items-center">
-          <span className="text-blue-500 text-2xl font-bold">
-            TeeDesigner
-          </span>
+          <img 
+            src="/lovable-uploads/9d06b532-9d23-4c9a-a781-c7e86e6016aa.png" 
+            alt="TeeDesigner Logo" 
+            className="h-10 w-auto"
+          />
         </Link>
         
         <nav className="hidden md:flex items-center space-x-6">
