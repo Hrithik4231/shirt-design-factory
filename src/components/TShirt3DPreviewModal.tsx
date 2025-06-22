@@ -34,43 +34,42 @@ function TShirt3DModelWithDesigns({ color, designsByView }: TShirt3DModelWithDes
 
   return (
     <group>
-      {/* T-shirt body */}
+      {/* Main t-shirt body - more realistic shape */}
       <mesh castShadow receiveShadow>
-        <cylinderGeometry args={[1.5, 1.8, 3, 32, 1, true]} />
-        <meshStandardMaterial color={threeColor} side={THREE.DoubleSide} />
+        <boxGeometry args={[3, 4, 0.2]} />
+        <meshStandardMaterial color={threeColor} />
       </mesh>
       
       {/* Left sleeve */}
-      <mesh castShadow receiveShadow position={[-1.7, -0.2, 0]} rotation={[0, 0, -Math.PI / 4]}>
-        <cylinderGeometry args={[0.5, 0.4, 1.5, 32, 1, true]} />
-        <meshStandardMaterial color={threeColor} side={THREE.DoubleSide} />
+      <mesh castShadow receiveShadow position={[-2.2, 1, 0]}>
+        <boxGeometry args={[1.6, 2, 0.2]} />
+        <meshStandardMaterial color={threeColor} />
       </mesh>
       
       {/* Right sleeve */}
-      <mesh castShadow receiveShadow position={[1.7, -0.2, 0]} rotation={[0, 0, Math.PI / 4]}>
-        <cylinderGeometry args={[0.5, 0.4, 1.5, 32, 1, true]} />
-        <meshStandardMaterial color={threeColor} side={THREE.DoubleSide} />
+      <mesh castShadow receiveShadow position={[2.2, 1, 0]}>
+        <boxGeometry args={[1.6, 2, 0.2]} />
+        <meshStandardMaterial color={threeColor} />
       </mesh>
       
-      {/* Neck */}
-      <mesh castShadow receiveShadow position={[0, 1.3, 0]}>
-        <cylinderGeometry args={[0.7, 0.7, 0.5, 32, 1, true]} />
-        <meshStandardMaterial color={threeColor} side={THREE.DoubleSide} />
+      {/* Neck opening */}
+      <mesh castShadow receiveShadow position={[0, 1.8, 0.1]}>
+        <cylinderGeometry args={[0.4, 0.4, 0.3, 16]} />
+        <meshStandardMaterial color={threeColor} />
       </mesh>
       
-      {/* Designs */}
       {/* Front designs */}
-      <group position={[0, 0, -1.5]}>
+      <group position={[0, 0, 0.11]}>
         {designsByView.front.map((design, index) => (
           <mesh 
             key={`front-${design.id}`} 
             position={[
-              ((design.x - 50) / 25), 
-              ((50 - design.y) / 25), 
-              0.01
+              ((design.x - 50) / 50) * 1.2, 
+              ((50 - design.y) / 50) * 1.5, 
+              0
             ]}
           >
-            <planeGeometry args={[1, 1]} />
+            <planeGeometry args={[0.8, 0.8]} />
             <meshBasicMaterial transparent={true}>
               <canvasTexture 
                 attach="map" 
@@ -82,17 +81,17 @@ function TShirt3DModelWithDesigns({ color, designsByView }: TShirt3DModelWithDes
       </group>
       
       {/* Back designs */}
-      <group position={[0, 0, 1.5]} rotation={[0, Math.PI, 0]}>
+      <group position={[0, 0, -0.11]} rotation={[0, Math.PI, 0]}>
         {designsByView.back.map((design, index) => (
           <mesh 
             key={`back-${design.id}`} 
             position={[
-              ((design.x - 50) / 25), 
-              ((50 - design.y) / 25), 
-              0.01
+              -((design.x - 50) / 50) * 1.2, 
+              ((50 - design.y) / 50) * 1.5, 
+              0
             ]}
           >
-            <planeGeometry args={[1, 1]} />
+            <planeGeometry args={[0.8, 0.8]} />
             <meshBasicMaterial transparent={true}>
               <canvasTexture 
                 attach="map" 
@@ -104,17 +103,17 @@ function TShirt3DModelWithDesigns({ color, designsByView }: TShirt3DModelWithDes
       </group>
       
       {/* Left side designs */}
-      <group position={[-1.5, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
+      <group position={[-1.51, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
         {designsByView.left.map((design, index) => (
           <mesh 
             key={`left-${design.id}`} 
             position={[
-              ((design.x - 50) / 25), 
-              ((50 - design.y) / 25), 
-              0.01
+              ((design.x - 50) / 50) * 1.2, 
+              ((50 - design.y) / 50) * 1.5, 
+              0
             ]}
           >
-            <planeGeometry args={[1, 1]} />
+            <planeGeometry args={[0.8, 0.8]} />
             <meshBasicMaterial transparent={true}>
               <canvasTexture 
                 attach="map" 
@@ -126,17 +125,17 @@ function TShirt3DModelWithDesigns({ color, designsByView }: TShirt3DModelWithDes
       </group>
       
       {/* Right side designs */}
-      <group position={[1.5, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+      <group position={[1.51, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
         {designsByView.right.map((design, index) => (
           <mesh 
             key={`right-${design.id}`} 
             position={[
-              ((design.x - 50) / 25), 
-              ((50 - design.y) / 25), 
-              0.01
+              -((design.x - 50) / 50) * 1.2, 
+              ((50 - design.y) / 50) * 1.5, 
+              0
             ]}
           >
-            <planeGeometry args={[1, 1]} />
+            <planeGeometry args={[0.8, 0.8]} />
             <meshBasicMaterial transparent={true}>
               <canvasTexture 
                 attach="map" 
@@ -236,18 +235,21 @@ const TShirt3DPreviewModal = ({
           </div>
           
           <div className="flex-1 w-full">
-            <Canvas shadows camera={{ position: [0, 0, 7], fov: 45 }}>
-              <ambientLight intensity={0.5} />
-              <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+            <Canvas shadows camera={{ position: [0, 0, 8], fov: 45 }}>
+              <ambientLight intensity={0.6} />
+              <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={0.8} castShadow />
+              <pointLight position={[-10, -10, -10]} intensity={0.3} />
               <TShirt3DModelWithDesigns color={tshirtColor} designsByView={designsByView} />
               <OrbitControls 
                 enablePan={true} 
                 enableZoom={true} 
                 autoRotate={true}
-                autoRotateSpeed={0.5}
+                autoRotateSpeed={1}
+                maxDistance={15}
+                minDistance={5}
               />
-              <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={5} blur={2.5} far={4} />
-              <Environment preset="city" />
+              <ContactShadows position={[0, -2.5, 0]} opacity={0.3} scale={8} blur={2} far={4} />
+              <Environment preset="studio" />
             </Canvas>
           </div>
           
